@@ -23,7 +23,6 @@ import System.IO.Unsafe
 import ApocTools
 import ApocStrategyHuman
 import ApocStrategyGreedy
-import ApocStrategyDivide
 
 
 ---Main-------------------------------------------------------------
