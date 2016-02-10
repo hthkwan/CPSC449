@@ -37,7 +37,9 @@ main = main' (unsafePerformIO getArgs)
 -}
 main'           :: [String] -> IO()
 main' args = do
-    -- This is where initial choosing will take place
+    -- This is where initial choosing will take place.
+    -- We need to verify if any input args were passed, otherwise prompt
+    -- for B/W to pick playtype.
     putStrLn "\nThe initial board:"
     print initBoard
 
