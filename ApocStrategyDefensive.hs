@@ -11,6 +11,7 @@ import ApocTools
 -}
 defense    :: Chooser
 defense b Normal        c = do
+    -- Where the logic for determining if you move goes.
     line <- getLine
     let vals = convertToIntList line
     return (Just [((vals !! 0),(vals !! 1)),((vals !! 2),(vals !! 3))])
