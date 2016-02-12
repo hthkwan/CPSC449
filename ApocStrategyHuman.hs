@@ -25,13 +25,9 @@ import ApocTools
      (0,0) to (2,1).
 -}
 human    :: Chooser
-human b Normal        c = do
-    line <- getLine
-    let vals = convertToIntList line
-    return (Just [((vals !! 0),(vals !! 1)),((vals !! 2),(vals !! 3))])
+human b Normal        c = return (Just [(0,0),(2,1)])
+    --line <- getLine
+    --let vals = convertToIntList line
+    --return (Just [((vals !! 0),(vals !! 1)),((vals !! 2),(vals !! 3))])
 human b PawnPlacement c = return (Just [(2,2)])
 
-{- | Converts the input line to a list of Ints.
--}
-convertToIntList :: String -> [Int]
-convertToIntList = map read . words

@@ -23,6 +23,7 @@ import System.IO.Unsafe
 import ApocTools
 import ApocStrategyHuman
 import ApocStrategyGreedy
+import ApocStrategyDefensive
 
 
 ---Main-------------------------------------------------------------
@@ -37,15 +38,20 @@ main = main' (unsafePerformIO getArgs)
 -}
 main'           :: [String] -> IO()
 main' args = do
+    parseArgs args
     -- This is where initial choosing will take place.
     -- We need to verify if any input args were passed, otherwise prompt
     -- for B/W to pick playtype.
-    putStrLn "\nThe initial board:"
+    -- putStrLn "\nThe initial board:"
     print initBoard
+    getHumanMove
 
-    putStrLn $ "\nThe initial board with back human (the placeholder for human) strategy having played one move\n"
-               ++ "(clearly illegal as we must play in rounds!):"
+    {-
+     putStrLn $ "\nThe initial board with back human (the placeholder for human) strategy having played one move\n"
+        ++ "(clearly illegal as we must play in rounds!):"
+    -}
     -- to here.
+
     move <- human (initBoard) Normal Black
     putStrLn (show $ GameState (if move==Nothing
                                 then Passed
@@ -58,6 +64,38 @@ main' args = do
                                                    (getFromBoard (theBoard initBoard) ((fromJust move) !! 0)))
                                          ((fromJust move) !! 0)
                                          E))
+
+{-
+-}
+parseArgs :: [String] -> IO ()
+parseArgs s 
+    | (length s) == 2   = do
+        putStrLn (head s)
+        putStrLn (head (tail s))
+    | otherwise         = do
+        putStrLn "Possible Strategies:\n\thuman\n\tgreedy\n\tdefense"
+        putStrLn "Enter the strategy for BLACK:"
+        black <- getLine
+        putStrLn black
+        putStrLn "Enter the strategy for WHITE:"
+        white <- getLine
+        putStrLn white
+
+{-
+-}
+getHumanMove :: IO ()
+getHumanMove = do
+    putStrLn $ "Enter the move coordinates for player Black in the form \'srcX srcY destX destY\'"
+        ++"\n(0 >= n >= 4, or just enter return for a \'pass\') B2:"
+    line <- getLine
+    let v = convertToIntList line
+    if (length v) == 4 then putStrLn "Normal"
+        else putStrLn "PawnPlacement" 
+
+{- | Converts the input line to a list of Ints.
+-}
+convertToIntList :: String -> [Int]
+convertToIntList = map read . words
 
 ---2D list utility functions-------------------------------------------------------
 
