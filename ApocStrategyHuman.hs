@@ -25,21 +25,20 @@ import ApocTools
      (0,0) to (2,1).
 -}
 human    :: Chooser
-human b Normal        c = return (Just [(0,0),(2,1)])
-    --line <- getLine
-    --let vals = convertToIntList line
-    --return (Just [((vals !! 0),(vals !! 1)),((vals !! 2),(vals !! 3))])
+human b Normal        c = getHumanNormalMove
 human b PawnPlacement c = return (Just [(2,2)])
 
 {- | Takes user input and converts it into the form
      [(int,int),(int,int)] for a Normal move.
 -}
-getHumanNormalMove :: IO ()
+getHumanNormalMove :: IO (Maybe [(Int,Int)])
 getHumanNormalMove = do
     putStrLn $ "Enter the move coordinates for player Black in the form \'srcX srcY destX destY\'"
         ++"\n(0 >= n >= 4, or just enter return for a \'pass\') B2:"
     line <- getLine
     let v = convertToIntList line
+    print v
+    return (Just [((v !! 0), (v !! 1)), ((v !! 2), (v !! 3))])
 
 {- | Converts the input line to a list of Ints.
 -}

@@ -44,7 +44,6 @@ main' args = do
     -- for B/W to pick playtype.
     -- putStrLn "\nThe initial board:"
     print initBoard
-    getHumanMove
 
     {-
      putStrLn $ "\nThe initial board with back human (the placeholder for human) strategy having played one move\n"
@@ -80,22 +79,6 @@ parseArgs s
         putStrLn "Enter the strategy for WHITE:"
         white <- getLine
         putStrLn white
-
-{-
--}
-getHumanMove :: IO ()
-getHumanMove = do
-    putStrLn $ "Enter the move coordinates for player Black in the form \'srcX srcY destX destY\'"
-        ++"\n(0 >= n >= 4, or just enter return for a \'pass\') B2:"
-    line <- getLine
-    let v = convertToIntList line
-    if (length v) == 4 then putStrLn "Normal"
-        else putStrLn "PawnPlacement" 
-
-{- | Converts the input line to a list of Ints.
--}
-convertToIntList :: String -> [Int]
-convertToIntList = map read . words
 
 ---2D list utility functions-------------------------------------------------------
 
