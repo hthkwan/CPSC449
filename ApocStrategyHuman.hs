@@ -25,20 +25,27 @@ import ApocTools
      (0,0) to (2,1).
 -}
 human    :: Chooser
-human b Normal        c = getHumanNormalMove
-human b PawnPlacement c = return (Just [(2,2)])
-
-{- | Takes user input and converts it into the form
-     [(int,int),(int,int)] for a Normal move.
--}
-getHumanNormalMove :: IO (Maybe [(Int,Int)])
-getHumanNormalMove = do
-    putStrLn $ "Enter the move coordinates for player Black in the form \'srcX srcY destX destY\'"
-        ++"\n(0 >= n >= 4, or just enter return for a \'pass\') B2:"
+human b Normal        c = do
+    --print c
+    if c == Black 
+    then putStrLn $ "Enter the move coordinates for player Black in the form \'srcX srcY destX destY\'"
+        ++" n(0 >= n >= 4, or just enter return for a \'pass\') B2:"
+    else putStrLn $ "Enter the move coordinates for player White in the form \'srcX srcY destX destY\'"
+        ++" n(0 >= n >= 4, or just enter return for a \'pass\') W2:"
     line <- getLine
+    putStrLn line
     let v = convertToIntList line
-    print v
     return (Just [((v !! 0), (v !! 1)), ((v !! 2), (v !! 3))])
+human b PawnPlacement c = do
+    if c == Black 
+    then putStrLn $ "Enter the coordinates to place the pawn for player Black in the form \'destX destY\':"
+        ++" [0 >= n >= 4] B1:"
+    else putStrLn $ "Enter the coordinates to place the pawn for player White in the form \'destX destY\':"
+        ++" [0 >= n >= 4] B1:"
+    line <- getLine
+    putStrLn line
+    let v = convertToIntList line
+    return (Just [((v !! 0), (v !! 1))])
 
 {- | Converts the input line to a list of Ints.
 -}

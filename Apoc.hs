@@ -51,7 +51,7 @@ main' args = do
     -}
     -- to here.
 
-    move <- human (initBoard) Normal Black
+    move <- human (initBoard) Normal White
     putStrLn (show $ GameState (if move==Nothing
                                 then Passed
                                 else Played (head (fromJust move), head (tail (fromJust move))))
