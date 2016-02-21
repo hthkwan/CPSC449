@@ -38,20 +38,13 @@ main = main' (unsafePerformIO getArgs)
 -}
 main'           :: [String] -> IO()
 main' args = do
-    parseArgs args
-    -- This is where initial choosing will take place.
-    -- We need to verify if any input args were passed, otherwise prompt
-    -- for B/W to pick playtype.
-    -- putStrLn "\nThe initial board:"
+    strat <- parseArgs args
+
     print initBoard
 
-    {-
-     putStrLn $ "\nThe initial board with back human (the placeholder for human) strategy having played one move\n"
-        ++ "(clearly illegal as we must play in rounds!):"
-    -}
-    -- to here.
+    move <- (strat !! 0) (initBoard) Normal Black
+    move' <- (strat !! 1) (initBoard) Normal White
 
-    move <- human (initBoard) Normal White
     putStrLn (show $ GameState (if move==Nothing
                                 then Passed
                                 else Played (head (fromJust move), head (tail (fromJust move))))
@@ -64,13 +57,21 @@ main' args = do
                                          ((fromJust move) !! 0)
                                          E))
 
-{-
+
+{- |
 -}
-parseArgs :: [String] -> IO ()
+stringToChooser :: String -> Chooser
+stringToChooser a = case a of
+    "human" -> human
+    "greedy" -> greedy
+    "defense" -> defense
+
+{- |
+-}
+parseArgs :: [String] -> IO([GameState -> PlayType -> Player -> IO (Maybe [(Int,Int)])])
 parseArgs s 
     | (length s) == 2   = do
-        putStrLn (head s)
-        putStrLn (head (tail s))
+        return [(stringToChooser (head s)),(stringToChooser (head(tail s)))]
     | otherwise         = do
         putStrLn "Possible Strategies:\n\thuman\n\tgreedy\n\tdefense"
         putStrLn "Enter the strategy for BLACK:"
@@ -79,6 +80,7 @@ parseArgs s
         putStrLn "Enter the strategy for WHITE:"
         white <- getLine
         putStrLn white
+        return [(stringToChooser black), (stringToChooser white)]
 
 ---2D list utility functions-------------------------------------------------------
 

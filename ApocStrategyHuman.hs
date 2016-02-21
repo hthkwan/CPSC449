@@ -29,9 +29,9 @@ human b Normal        c = do
     --print c
     if c == Black 
     then putStrLn $ "Enter the move coordinates for player Black in the form \'srcX srcY destX destY\'"
-        ++" n(0 >= n >= 4, or just enter return for a \'pass\') B2:"
+                    ++" n(0 >= n >= 4, or just enter return for a \'pass\') B2:"
     else putStrLn $ "Enter the move coordinates for player White in the form \'srcX srcY destX destY\'"
-        ++" n(0 >= n >= 4, or just enter return for a \'pass\') W2:"
+                    ++" n(0 >= n >= 4, or just enter return for a \'pass\') W2:"
     line <- getLine
     putStrLn line
     let v = convertToIntList line
@@ -39,9 +39,9 @@ human b Normal        c = do
 human b PawnPlacement c = do
     if c == Black 
     then putStrLn $ "Enter the coordinates to place the pawn for player Black in the form \'destX destY\':"
-        ++" [0 >= n >= 4] B1:"
+                    ++" [0 >= n >= 4] B1:"
     else putStrLn $ "Enter the coordinates to place the pawn for player White in the form \'destX destY\':"
-        ++" [0 >= n >= 4] B1:"
+                    ++" [0 >= n >= 4] B1:"
     line <- getLine
     putStrLn line
     let v = convertToIntList line
