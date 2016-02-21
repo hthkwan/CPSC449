@@ -59,6 +59,45 @@ main' args = do
                                          ((fromJust move) !! 0)
                                          E))
 
+---Our Functions--------------------------------------------------------------
+{- |
+-}
+isValid                 ::GameState -> Player -> Int -> Int -> Int -> Int -> Bool
+isValid a ply x y x' y'
+    |((x' < 0 || y' < 0))||(x' > 4 || y' > 4) = False --destination is out of range
+    |((x < 0 || y < 0)||(x > 4 || y > 4)) = False --origin is out of range
+    |((getFromBoard (theBoard a) (x,y)) == E) = False --no piece at origin to move
+    |((getFromBoard (theBoard a) (x',y')) == WP) || ((getFromBoard (theBoard a) (x',y')) == WK) = if ply == Black then True else False --destination occupied by your own piece
+    |((getFromBoard (theBoard a) (x',y')) == BP) || ((getFromBoard (theBoard a) (x',y')) == BK) = if ply == White then True else False --destination occupied by your own piece
+    |((getFromBoard (theBoard a) (x,y)) == BP || (getFromBoard (theBoard a) (x,y)) == BK) && (ply == White) = False -- moving a piece that's not yours
+    |((getFromBoard (theBoard a) (x,y)) == WP || (getFromBoard (theBoard a) (x,y)) == WK) && (ply == Black) = False -- moving a piece that's not yours
+    |((getFromBoard (theBoard a) (x,y)) == BP || (getFromBoard (theBoard a) (x,y)) == BK) && (ply == Black) = --destination is not reachable by the piece found in origin cell - black player
+        if (((getFromBoard (theBoard a) (x,y)) == BP) && ((y' /= (y-1)) || (x /= x')))
+        then False else if((getFromBoard (theBoard a) (x,y)) == BK) && (((x' == (x-2) || x' == (x+2)) && (y' == (y+1) || y' == (y-1))) || ((x' == (x-1) || x' == (x+1)) && (y' == (y+2)||y' == (y-2))))
+                        then True else False
+    |((getFromBoard (theBoard a) (x,y)) == WP || (getFromBoard (theBoard a) (x,y)) == WK) && (ply == White) = --destination is not reachable by the piece found in origin cell - black player
+        if (((getFromBoard (theBoard a) (x,y)) == WP) && ((y' /= (y-1)) || (x /= x')))
+        then False else if((getFromBoard (theBoard a) (x,y)) == WK) && (((x' == (x-2) || x' == (x+2)) && (y' == (y+1) || y' == (y-1))) || ((x' == (x-1) || x' == (x+1)) && (y' == (y+2)||y' == (y-2))))
+                        then True else False
+    |otherwise = True
+
+{- |
+-}
+pieceNum            ::[[Cell]] -> Cell -> Int
+pieceNum [] _       = 0
+pieceNum (x:xs) BK  = (pieceNum' x BK) + pieceNum xs BK
+pieceNum (x:xs) BP  = (pieceNum' x BP) + pieceNum xs BP
+pieceNum (x:xs) WK  = (pieceNum' x WK) + pieceNum xs WK
+pieceNum (x:xs) WP  = (pieceNum' x WP) + pieceNum xs WP
+
+{- |
+-}
+pieceNum'           ::[Cell] -> Cell -> Int
+pieceNum' [] _      = 0
+pieceNum' (x:xs) BK = if (x == BK) then (1 + pieceNum' xs BK) else pieceNum' xs BK
+pieceNum' (x:xs) BP = if (x == BP) then (1 + pieceNum' xs BP) else pieceNum' xs BP
+pieceNum' (x:xs) WK = if (x == WK) then (1 + pieceNum' xs WK) else pieceNum' xs WK
+pieceNum' (x:xs) WP = if (x == WP) then (1 + pieceNum' xs WP) else pieceNum' xs WP
 
 {- | Helper function for parseArgs to convert a specified string input into the
      correct Chooser type for the game.
