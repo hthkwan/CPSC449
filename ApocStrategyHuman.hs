@@ -35,7 +35,7 @@ human b Normal        c = do
     line <- getLine
     putStrLn line
     let v = convertToIntList line
-    return (Just [((v !! 0), (v !! 1)), ((v !! 2), (v !! 3))])
+    if length v == 0 then return Nothing else return (Just [((v !! 0), (v !! 1)), ((v !! 2), (v !! 3))])
 human b PawnPlacement c = do
     if c == Black 
     then putStrLn $ "Enter the coordinates to place the pawn for player Black in the form \'destX destY\':"
@@ -45,7 +45,7 @@ human b PawnPlacement c = do
     line <- getLine
     putStrLn line
     let v = convertToIntList line
-    return (Just [((v !! 0), (v !! 1))])
+    if length v == 0 then return Nothing else return (Just [((v !! 0), (v !! 1))])
 
 {- | A helper function for converting user read input from stdin into a list of
      Ints that can be used as valid coordinates.
