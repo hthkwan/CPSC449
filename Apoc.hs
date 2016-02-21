@@ -47,6 +47,10 @@ main' args = do
     move <- (strat !! 0) (initBoard) Normal Black
     move' <- (strat !! 1) (initBoard) Normal White
 
+    -- This is where isValid was tested
+    --let test = isValid (initBoard) Black 0 4 1 3
+    --print test
+
     putStrLn (show $ GameState (if move==Nothing
                                 then Passed
                                 else Played (head (fromJust move), head (tail (fromJust move))))
