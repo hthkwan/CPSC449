@@ -21,12 +21,12 @@ import Data.Char
 import System.IO.Unsafe
 import ApocTools
 
-{- | This is just a placeholder for the human strategy: it always chooses to play
-     (0,0) to (2,1).
+{- | The human strategy only prompts the user for input. There is no validity
+     checking on this end as that is handled by the move validity checker in
+     Apoc.hs
 -}
 human    :: Chooser
 human b Normal        c = do
-    --print c
     if c == Black 
     then putStrLn $ "Enter the move coordinates for player Black in the form \'srcX srcY destX destY\'"
                     ++" n(0 >= n >= 4, or just enter return for a \'pass\') B2:"
@@ -47,7 +47,8 @@ human b PawnPlacement c = do
     let v = convertToIntList line
     return (Just [((v !! 0), (v !! 1))])
 
-{- | Converts the input line to a list of Ints.
+{- | A helper function for converting user read input from stdin into a list of
+     Ints that can be used as valid coordinates.
 -}
 convertToIntList :: String -> [Int]
 convertToIntList = map read . words
