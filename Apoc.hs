@@ -38,10 +38,12 @@ main = main' (unsafePerformIO getArgs)
 -}
 main'           :: [String] -> IO()
 main' args = do
+    -- This is where the arguments are parsed into a placeholder list.
     strat <- parseArgs args
 
     print initBoard
 
+    -- This is where they are used, 
     move <- (strat !! 0) (initBoard) Normal Black
     move' <- (strat !! 1) (initBoard) Normal White
 
@@ -58,7 +60,8 @@ main' args = do
                                          E))
 
 
-{- |
+{- | Helper function for parseArgs to convert a specified string input into the
+     correct Chooser type for the game.
 -}
 stringToChooser :: String -> Chooser
 stringToChooser a = case a of
@@ -66,7 +69,9 @@ stringToChooser a = case a of
     "greedy" -> greedy
     "defense" -> defense
 
-{- |
+{- | Takes the command line arguments (if any are passed) and returns the
+     appropriate list of strategies. At position 0 is the Black strategy, and
+     position 1 is the White strategy.
 -}
 parseArgs :: [String] -> IO([GameState -> PlayType -> Player -> IO (Maybe [(Int,Int)])])
 parseArgs s 
