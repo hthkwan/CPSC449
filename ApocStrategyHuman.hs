@@ -41,7 +41,7 @@ human b PawnPlacement c = do
     then putStrLn $ "Enter the coordinates to place the pawn for player Black in the form \'destX destY\':"
                     ++" [0 >= n >= 4] B1:"
     else putStrLn $ "Enter the coordinates to place the pawn for player White in the form \'destX destY\':"
-                    ++" [0 >= n >= 4] B1:"
+                    ++" [0 >= n >= 4] W1:"
     line <- getLine
     putStrLn line
     let v = convertToIntList line
