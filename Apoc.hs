@@ -37,21 +37,58 @@ main = main' (unsafePerformIO getArgs)
      2. run from the command line by calling this function with the value from (getArgs)
 -}
 main'           :: [String] -> IO()
-main' args = do
+main' args = do {
     -- This is where the arguments are parsed into a placeholder list.
     strat <- parseArgs args
 
-    print initBoard
+	print initBoard
 
     -- This is where they are used, 
-    move <- (strat !! 0) (initBoard) Normal Black
+	move <- (strat !! 0) (initBoard) Normal Black
     move' <- (strat !! 1) (initBoard) Normal White
 
+	--(let valid = isValid (initBoard) Black (0, 0) (0, 0))
+	{-valid = 	isValid (initBoard) Black (head (fromJust move)) (last (fromJust move))-}
+	{-}
+    let initBoard = (GameState (if (((isValid (initBoard) Black (head (fromJust move)) (last (fromJust move))) == True) && move /= Nothing)
+								then Played (head (fromJust move), last (fromJust move))
+								else if (((isValid (initBoard) Black (head (fromJust move)) (last (fromJust move))) == False) && move /= Nothing)
+                                    Goofed (head(fromJust move), last (fromJust move))
+                                else (((isValid (initBoard) Black (head (fromJust move)) (last (fromJust move))) == True) && move == Nothing)
+                                    Passed
+
+    if move /= Nothing then(let initBoard = (GameState	(if (isValid (initBoard) Black (head (fromJust move)) (last (fromJust move))) == true
+														then	(Played (head (fromJust move), last (fromJust move)))
+														else	(Goofed (head (fromJust move), last (fromJust move))))
+														(blackPen initBoard)
+														(whitePlay initBoard)
+														(whitePen initBoard)
+														(theBoard initBoard)))
+							{-in case valid of
+								True -> (initBoard = (GameState	(Played (head (fromJust move), last (fromJust move))
+																(blackPen initBoard)
+																(whitePlay initBoard)
+																(whitePen initBoard)
+																(theBoard initBoard))))
+								False -> (initBoard {blackPlay = Goofed (head (fromJust move), last (fromJust move)),
+													blackPen = ((blackPen initBoard) + 1),
+													whitePlay = (whitePlay initBoard),
+													whitePen = (whitePen initBoard),
+													theBoard = (theBoard initBoard)}) )-}
+						else (let initBoard = (Passed)
+											(blackPen initBoard)
+											(whitePlay initBoard)
+											(whitePen initBoard)
+											(theBoard initBoard))) 
+        --**Call function to check pawn last row
+		--valid' = isValid (initBoard) White (head (fromJust move')) (last (fromJust move'))
+
+    --**Function for pawn is in last row
     -- This is where isValid was tested
     --let test = isValid (initBoard) Black 0 4 1 3
     --print test
-
-    putStrLn (show $ GameState (if move==Nothing
+	-}
+	putStrLn (show $ GameState (if move==Nothing
                                 then Passed
                                 else Played (head (fromJust move), head (tail (fromJust move))))
                                (blackPen initBoard)
@@ -61,13 +98,55 @@ main' args = do
                                                    ((fromJust move) !! 1)
                                                    (getFromBoard (theBoard initBoard) ((fromJust move) !! 0)))
                                          ((fromJust move) !! 0)
-                                         E))
+                                         E))}
 
 ---Our Functions--------------------------------------------------------------
 {- |
 -}
-isValid                 ::GameState -> Player -> Int -> Int -> Int -> Int -> Bool
-isValid a ply x y x' y'
+
+
+
+updateGameState :: Gamestate -> IO (Maybe [(Int,Int)])-> IO (Maybe [(Int,Int)]) -> Maybe Bool -> Maybe Bool -> Gamestate
+updateGamestate a [(x,y), (x', y')] [(m, n), (m', n')] bValid wValid =
+    Gamestate   (if bValid == False then Goofed((x,y) , (x',y')) else Played((x,y) , (x',y')))    
+                (if bValid == False then ((blackPen a) +1) else (blackPen a))
+                (if wValid == False then Goofed((m,n) , (m',n')) else Played((m,n) , (m',n')))
+                (if wValid == False then ((whitePen a) +1) else (whitePen a))
+                (replace2
+                    (replace2
+                        (replace2
+                            (replace2 (theBoard a) (x',y') (getFromBoard (theBoard a) (x,y))) (x,y) E) (m', n') (getFromBoard (theBoard a) (m,n))) (m,n) E)  
+
+{-
+updateGamestate a [(x,y), (x', y')] [(m, n), (m', n')] bValid wValid
+
+updateGamestate a [(x,y), (x', y')] Nothing bValid wValid
+
+
+updateGamestate a Nothing [(m, n), (m', n')] bValid wValid
+
+
+updateGamestate a Nothing Nothing bValid wValid
+-}
+
+
+-- | Replaces the nth element in a row with a new element.
+replace         :: [a] -> Int -> a -> [a]
+replace xs n elem = let (ys,zs) = splitAt n xs
+                     in (if null zs then (if null ys then [] else init ys) else ys)
+                        ++ [elem]
+                        ++ (if null zs then [] else tail zs)
+
+-- | Replaces the (x,y)th element in a list of lists with a new element.
+replace2        :: [[a]] -> (Int,Int) -> a -> [[a]]
+replace2 xs (x,y) elem = replace xs y (replace (xs !! y) x elem)
+
+
+
+
+
+isValid                 ::GameState -> Player -> (Int, Int) -> (Int, Int) -> Bool
+isValid a ply (x, y) (x', y')
     |((x' < 0 || y' < 0))||(x' > 4 || y' > 4) = False --destination is out of range
     |((x < 0 || y < 0)||(x > 4 || y > 4)) = False --origin is out of range
     |((getFromBoard (theBoard a) (x,y)) == E) = False --no piece at origin to move
@@ -110,7 +189,7 @@ stringToChooser :: String -> Chooser
 stringToChooser a = case a of
     "human" -> human
     "greedy" -> greedy
-    "defense" -> defense
+    "defense" -> defensive
 
 {- | Takes the command line arguments (if any are passed) and returns the
      appropriate list of strategies. At position 0 is the Black strategy, and
